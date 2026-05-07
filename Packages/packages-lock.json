@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.gator-dragon-games.jigglephysics": {
-      "version": "file:C:/Users/nerea/Documents/.4o CARRERA/Diseño de Niveles/JigglePhysics-15.0.8/JigglePhysics-15.0.8",
+      "version": "file:C:/Users/junji/Downloads/JigglePhysics-15.0.8",
       "depth": 0,
       "source": "local",
       "dependencies": {
