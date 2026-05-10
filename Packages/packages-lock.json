@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.gator-dragon-games.jigglephysics": {
-      "version": "file:C:/Users/junji/Downloads/JigglePhysics-15.0.8",
+      "version": "file:../Assets/JigglePhysics-15.0.8",
       "depth": 0,
       "source": "local",
       "dependencies": {

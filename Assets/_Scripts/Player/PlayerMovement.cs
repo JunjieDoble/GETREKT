@@ -1,91 +1,167 @@
+ï»¿using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Ajustes de Movimiento")]
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 10f;
+    [Header("Player camera setting")]
+    public Transform lookAt;
+    public Camera playerCamara;
+    public float maxDistanceToLookAt = 8f;
+    public float minDistanceToLookAt = 2f;
+    public float cameraRotationSpeed = 10;
+    public bool invertPitch;
+    [Range(1, 179)] public float mMinPitch = 1;
+    [Range(1, 179)] public float mMaxPitch = 179;
 
-    [Header("Salto")]
-    public float jumpForce = 7f;
-    public float groundDistance = 0.2f; // Qué tan cerca del suelo debe estar
+    [Header("Impulse Settings")]
+    public float impulseForce = 3f;
+    public float rotationForce = 1f;
+    public float jumpForce = 5f;
+    public float stopThreshold = 0.1f;
 
     private Rigidbody rb;
-    private Vector2 moveInput;
-    private Transform camTransform;
-    private bool isGrounded;
+    private float _mYaw;
+    private float _mPitch;
+    private Vector2 _mLookDirection;
+    private Vector3 cameraDirection;
+    private float cameraDistance;
+    private float scrollCameraDistance;
+    private Vector2 scrollValue;
+    private bool isColliding = false;
+    public bool isGrounded = true;
 
-    void Awake()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        camTransform = Camera.main.transform;
+        cameraDirection = playerCamara.transform.position - lookAt.position;
+        cameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
+        scrollCameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public void OnMove(InputValue value)
+    private void Update()
     {
-        moveInput = value.Get<Vector2>();
+        PlayerCamera();
     }
 
-    public void OnJump(InputValue value)
+    private void FixedUpdate()
     {
-        if (value.isPressed && isGrounded)
+        isGrounded = Mathf.Abs(rb.linearVelocity.y) < stopThreshold && isColliding;
+
+        // LÃ³gica de desbloqueo combinada:
+        // Solo recuperamos el control si estÃ¡ en el suelo Y casi detenido
+        if (isGrounded && rb.linearVelocity.magnitude < stopThreshold && rb.angularVelocity.magnitude < stopThreshold)
         {
-            // Aplicamos impulso hacia arriba
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 
-    void FixedUpdate()
+    private void PlayerCamera()
     {
-        CheckGround();
-        MoveSausage();
+        _mYaw -= _mLookDirection.x * cameraRotationSpeed * Time.deltaTime;
+        _mPitch += _mLookDirection.y * cameraRotationSpeed * Time.deltaTime;
+        _mPitch = Math.Clamp(_mPitch, mMinPitch, mMaxPitch);
+
+        cameraDirection = playerCamara.transform.position - lookAt.position;
+
+        // Scroll para acercar y alejar camara
+        scrollCameraDistance -= scrollValue.y;
+        scrollCameraDistance = Math.Clamp(scrollCameraDistance, minDistanceToLookAt, maxDistanceToLookAt);
+        //lookAt.localRotation = Quaternion.Euler(_mPitch * (invertPitch ? -1.0f : 1.0f), 0.0f, 0.0f);
+        //lookAt.rotation = Quaternion.Euler(_mPitch * (invertPitch ? -1.0f : 1.0f), _mYaw, 0.0f);
+
+        // Raycast desde jugador hacia camara para detectar obstaculos y mover camara mas hacia jugador
+        Vector3 endPos;
+        RaycastHit hit;
+        if (Physics.Raycast(lookAt.transform.position, cameraDirection, out hit, scrollCameraDistance))
+        {
+            GameObject hitObj = hit.collider.gameObject;
+            if (hitObj.layer == 6)
+            {
+                endPos = hit.point;
+                cameraDistance = Vector3.Distance(lookAt.position, endPos);
+            }
+        }
+        else
+        {
+            cameraDistance = scrollCameraDistance;
+        }
+
+        // Convertir grados a radianes
+        float yawRad = _mYaw * Mathf.Deg2Rad;
+        float pitchRad = _mPitch * Mathf.Deg2Rad;
+
+        // Calculo de las coordenadas de camara cartesianas
+        float x = cameraDistance * Mathf.Sin(pitchRad) * Mathf.Cos(yawRad);
+        float y = cameraDistance * Mathf.Cos(pitchRad);
+        float z = cameraDistance * Mathf.Sin(pitchRad) * Mathf.Sin(yawRad);
+        Vector3 offset = new Vector3(x, y, z);
+
+        playerCamara.transform.position = lookAt.position + offset;
+        playerCamara.transform.LookAt(lookAt.position);
     }
 
-    void CheckGround()
+    public void OnLook(InputAction.CallbackContext context)
     {
-        isGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, groundDistance + 0.1f);
-
-        Debug.Log("Tocando suelo: " + isGrounded);
+        _mLookDirection = context.ReadValue<Vector2>();
     }
 
-    void MoveSausage()
+    public void OnScroll(InputAction.CallbackContext context)
     {
-        // Calcular dirección relativa a la cámara
-        Vector3 forward = camTransform.forward;
-        Vector3 right = camTransform.right;
+        scrollValue = context.ReadValue<Vector2>();
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        if (!context.started) return;
+
+        Vector2 input = context.ReadValue<Vector2>();
+        if (input == Vector2.zero) return;
+
+        if (input.x != 0 && input.y == 0)
+        {
+            ApplyRotationImpulse(input.x);
+        }
+        else if (input.y != 0)
+        {
+            ApplyForwardImpulse(input.y);
+        }
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (!context.started || !isGrounded) return;
+
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private void ApplyForwardImpulse(float forwardInput)
+    {
+        Vector3 forward = playerCamara.transform.forward;
         forward.y = 0;
-        right.y = 0;
         forward.Normalize();
-        right.Normalize();
 
-        Vector3 desiredDirection = forward * moveInput.y + right * moveInput.x;
-
-        if (desiredDirection.magnitude > 0.1f)
-        {
-            // Movimiento
-            rb.MovePosition(rb.position + desiredDirection * moveSpeed * Time.fixedDeltaTime);
-
-            // Rotación suave hacia la dirección del movimiento
-            Quaternion targetRotation = Quaternion.LookRotation(desiredDirection);
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime));
-        }
+        rb.AddForce(forward * forwardInput * impulseForce, ForceMode.Impulse);
     }
 
-    /*void MoveSausage()
+    private void ApplyRotationImpulse(float sideInput)
     {
-        if (desiredDirection.magnitude > 0.1f)
-        {
-            // Solo aplicamos velocidad horizontal para no interferir con la gravedad/salto
-            Vector3 currentVelocity = rb.linearVelocity; // En Unity 6 'velocity' se recomienda como 'linearVelocity'
-            Vector3 targetVel = desiredDirection * moveSpeed;
+        Vector3 torque = Vector3.up * sideInput * rotationForce;
+        rb.AddTorque(torque, ForceMode.Impulse);
+    }
 
-            rb.linearVelocity = new Vector3(targetVel.x, currentVelocity.y, targetVel.z);
+    private void OnCollisionStay(Collision collision)
+    {
+        isColliding = true;
+    }
 
-            Quaternion targetRotation = Quaternion.LookRotation(desiredDirection);
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime));
-        }
-    }*/
+    private void OnCollisionExit(Collision collision)
+    {
+        isColliding = false;
+    }
 }
