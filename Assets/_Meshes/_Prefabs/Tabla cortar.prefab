@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 2579386794001152076}
   - component: {fileID: 2556305640754835132}
   - component: {fileID: 5451200364759370553}
-  m_Layer: 0
+  - component: {fileID: 350236615583515580}
+  - component: {fileID: 3332870267286079634}
+  m_Layer: 6
   m_Name: Tabla cortar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,3 +92,45 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &350236615583515580
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8045355808427024508}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.004017762, y: 0.0039999997, z: 0.0039999997}
+  m_Center: {x: 0.0005386826, y: -0, z: 0}
+--- !u!65 &3332870267286079634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8045355808427024508}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.001710516, y: 0.0012037121, z: 0.0039999997}
+  m_Center: {x: -0.0023504265, y: -0.000037784594, z: -1.9369133e-18}

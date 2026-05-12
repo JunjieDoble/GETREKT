@@ -72,20 +72,14 @@ public class PlayerMovement : MonoBehaviour
         // Scroll para acercar y alejar camara
         scrollCameraDistance -= scrollValue.y;
         scrollCameraDistance = Math.Clamp(scrollCameraDistance, minDistanceToLookAt, maxDistanceToLookAt);
-        //lookAt.localRotation = Quaternion.Euler(_mPitch * (invertPitch ? -1.0f : 1.0f), 0.0f, 0.0f);
-        //lookAt.rotation = Quaternion.Euler(_mPitch * (invertPitch ? -1.0f : 1.0f), _mYaw, 0.0f);
 
         // Raycast desde jugador hacia camara para detectar obstaculos y mover camara mas hacia jugador
         Vector3 endPos;
         RaycastHit hit;
         if (Physics.Raycast(lookAt.transform.position, cameraDirection, out hit, scrollCameraDistance))
         {
-            GameObject hitObj = hit.collider.gameObject;
-            if (hitObj.layer == 6)
-            {
-                endPos = hit.point;
-                cameraDistance = Vector3.Distance(lookAt.position, endPos);
-            }
+            endPos = hit.point;
+            cameraDistance = Vector3.Distance(lookAt.position, endPos);
         }
         else
         {
