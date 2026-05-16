@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxDistanceToLookAt = 8f;
     public float minDistanceToLookAt = 2f;
     public float cameraRotationSpeed = 10;
+    public LayerMask cameraLayerMask;
     public bool invertPitch;
     [Range(1, 179)] public float mMinPitch = 1;
     [Range(1, 179)] public float mMaxPitch = 179;
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public float impulseForce = 3f;
     public float rotationForce = 1f;
     public float jumpForce = 5f;
-    public float stopThreshold = 0.1f;
+    public float stopThreshold = 1f;
 
     private Rigidbody rb;
     private float _mYaw;
@@ -76,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         // Raycast desde jugador hacia camara para detectar obstaculos y mover camara mas hacia jugador
         Vector3 endPos;
         RaycastHit hit;
-        if (Physics.Raycast(lookAt.transform.position, cameraDirection, out hit, scrollCameraDistance))
+        if (Physics.Raycast(lookAt.transform.position, cameraDirection, out hit, scrollCameraDistance, cameraLayerMask))
         {
             endPos = hit.point;
             cameraDistance = Vector3.Distance(lookAt.position, endPos);
