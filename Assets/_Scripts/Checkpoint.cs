@@ -26,11 +26,13 @@ public class Checkpoint : MonoBehaviour
     {
         checkpointPosition = pos;
         hasCheckpoint = true;
+        Debug.Log("Checkpoint renewed");
         checkpointText.SetText("Checkpoint reached!");
     }
 
     public Vector3 GetCheckpointPosition()
     {
-        return hasCheckpoint ? checkpointPosition : startPosition;
+        if (hasCheckpoint) Debug.Log("returning to checkpoint"); else Debug.Log("returning to start position");
+            return hasCheckpoint ? checkpointPosition : startPosition;
     }
 }
