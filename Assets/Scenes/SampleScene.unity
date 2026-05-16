@@ -2447,8 +2447,8 @@ HingeJoint:
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_UseSpring: 1
   m_Spring:
-    spring: 100
-    damper: 10
+    spring: 10
+    damper: 5
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
@@ -2459,8 +2459,8 @@ HingeJoint:
   m_ExtendedLimits: 0
   m_UseAcceleration: 0
   m_Limits:
-    min: -45
-    max: 45
+    min: -25
+    max: 25
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -3520,6 +3520,19 @@ CapsuleCollider:
   m_Height: 1.1804206
   m_Direction: 2
   m_Center: {x: 0, y: -0.32, z: -0.04418409}
+--- !u!114 &984875161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984875151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 877daef87501de243835ec4d6baab0a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BalancingFix
+  bridgeForce: 10
 --- !u!1 &1019381458
 GameObject:
   m_ObjectHideFlags: 0
@@ -4105,6 +4118,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 762219482943040392, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       insertIndex: -1
       addedObject: {fileID: 984875155}
+    - targetCorrespondingSourceObject: {fileID: 762219482943040392, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 984875161}
     - targetCorrespondingSourceObject: {fileID: 762219482943040392, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       insertIndex: -1
       addedObject: {fileID: 984875152}

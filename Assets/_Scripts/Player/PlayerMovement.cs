@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Impulse Settings")]
     public float impulseForce = 3f;
-    public float rotationForce = 1f;
+    public float rotationForce = 0.4f;
     public float jumpForce = 5f;
     public float stopThreshold = 1f;
 
@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
         cameraDirection = playerCamara.transform.position - lookAt.position;
         cameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
         scrollCameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
