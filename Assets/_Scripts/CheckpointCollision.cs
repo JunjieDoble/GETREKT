@@ -10,7 +10,6 @@ public class CheckpointCollision : MonoBehaviour
         if (other.CompareTag("Player") && !isReached)
         {
             isReached = true;
-            Debug.Log("Checkpoint reached at position: " + transform.position);
 
             if (checkpoint != null)
             {

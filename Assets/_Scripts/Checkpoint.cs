@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
@@ -26,13 +27,18 @@ public class Checkpoint : MonoBehaviour
     {
         checkpointPosition = pos;
         hasCheckpoint = true;
-        Debug.Log("Checkpoint renewed");
         checkpointText.SetText("Checkpoint reached!");
+        StartCoroutine(HideTextCoroutine());
     }
 
     public Vector3 GetCheckpointPosition()
     {
-        if (hasCheckpoint) Debug.Log("returning to checkpoint"); else Debug.Log("returning to start position");
             return hasCheckpoint ? checkpointPosition : startPosition;
+    }
+
+    IEnumerator HideTextCoroutine()
+    {
+        yield return new WaitForSeconds(2f);
+        checkpointText.SetText("");
     }
 }
