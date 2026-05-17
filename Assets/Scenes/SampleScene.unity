@@ -1173,6 +1173,7 @@ Transform:
   - {fileID: 1453680572}
   - {fileID: 519204664}
   - {fileID: 1446346031}
+  - {fileID: 639247323}
   - {fileID: 587501871}
   - {fileID: 2067995070}
   - {fileID: 231321674}
@@ -2405,8 +2406,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 639247323}
-  - component: {fileID: 639247326}
   - component: {fileID: 639247325}
+  - component: {fileID: 639247326}
   - component: {fileID: 639247324}
   m_Layer: 0
   m_Name: TenedorPivot
@@ -2423,13 +2424,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639247322}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000014901161, y: -0.000000014901161, z: -0.952984, w: 0.30302075}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.30274096, y: -0.6390211, z: -0.6390211, w: -0.30274105}
+  m_LocalPosition: {x: -9.49, y: 19.57, z: 9.64}
+  m_LocalScale: {x: 1.2562999, y: 1.2563, z: 1.2562999}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1019381462}
-  m_Father: {fileID: 1446346031}
+  m_Father: {fileID: 216837829}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!59 &639247324
 HingeJoint:
@@ -2441,8 +2442,8 @@ HingeJoint:
   serializedVersion: 3
   m_ConnectedBody: {fileID: 1446346032}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
+  m_Anchor: {x: -0.1463568, y: 0.00009828806, z: 0.021000028}
+  m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_UseSpring: 1
@@ -2516,7 +2517,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 94
   m_CollisionDetection: 0
 --- !u!4 &640718451 stripped
 Transform:
@@ -3527,12 +3528,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 984875151}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 877daef87501de243835ec4d6baab0a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BalancingFix
-  bridgeForce: 10
+  bridgeForce: 0.08
 --- !u!1 &1019381458
 GameObject:
   m_ObjectHideFlags: 0
@@ -3686,15 +3687,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 686241926615325396, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.57
+      value: -8.3
       objectReference: {fileID: 0}
     - target: {fileID: 686241926615325396, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.6
+      value: 20.47
       objectReference: {fileID: 0}
     - target: {fileID: 686241926615325396, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.73
+      value: 11.45
       objectReference: {fileID: 0}
     - target: {fileID: 686241926615325396, guid: 3113a602c31339246ad7d947165cfa50, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5259,8 +5260,7 @@ Transform:
   m_LocalPosition: {x: -9.49, y: 19.57, z: 9.64}
   m_LocalScale: {x: 1.2563, y: 1.2563, z: 1.2563}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 639247323}
+  m_Children: []
   m_Father: {fileID: 216837829}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1446346032
@@ -5286,9 +5286,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!1 &1453590173
 GameObject:

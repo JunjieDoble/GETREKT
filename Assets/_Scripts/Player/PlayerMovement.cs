@@ -38,6 +38,10 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
+        Vector3 customCenterOfMass = new Vector3(0, -0.3f, 0); // Ajusta este valor
+
+        rb.centerOfMass = customCenterOfMass;
+
         cameraDirection = playerCamara.transform.position - lookAt.position;
         cameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
         scrollCameraDistance = Vector3.Distance(transform.position, playerCamara.transform.position);
@@ -63,7 +67,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void PlayerCamera()
+    void OnDrawGizmos()
+    {
+        if (rb != null)
+        {
+            // Convierte el centro de masa local a coordenadas mundiales
+            Vector3 worldCenterOfMass = transform.TransformPoint(rb.centerOfMass);
+
+            // Dibuja una esfera roja en el centro de masa
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(worldCenterOfMass, 0.1f);
+
+            // Dibuja una línea desde el centro del objeto hasta el centro de masa
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(transform.position, worldCenterOfMass);
+
+            // Añade texto (opcional, requiere using UnityEditor)
+#if UNITY_EDITOR
+            UnityEditor.Handles.Label(worldCenterOfMass, "Center of Mass");
+#endif
+        }
+    }
+
+private void PlayerCamera()
     {
         _mYaw -= _mLookDirection.x * cameraRotationSpeed * Time.deltaTime;
         _mPitch += _mLookDirection.y * cameraRotationSpeed * Time.deltaTime;
