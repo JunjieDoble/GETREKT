@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Impulse Settings")]
     public float impulseForce = 3f;
-    public float rotationForce = 0.4f;
+    public float rotationForce = 1f;
     public float jumpForce = 5f;
     public float stopThreshold = 1f;
 
@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        Vector3 customCenterOfMass = new Vector3(0, -0.3f, 0); // Ajusta este valor
+        Vector3 customCenterOfMass = new Vector3(0, -0.3f, 0);
 
         rb.centerOfMass = customCenterOfMass;
 
@@ -64,28 +64,6 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (rb != null)
-        {
-            // Convierte el centro de masa local a coordenadas mundiales
-            Vector3 worldCenterOfMass = transform.TransformPoint(rb.centerOfMass);
-
-            // Dibuja una esfera roja en el centro de masa
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(worldCenterOfMass, 0.1f);
-
-            // Dibuja una línea desde el centro del objeto hasta el centro de masa
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(transform.position, worldCenterOfMass);
-
-            // Añade texto (opcional, requiere using UnityEditor)
-#if UNITY_EDITOR
-            UnityEditor.Handles.Label(worldCenterOfMass, "Center of Mass");
-#endif
         }
     }
 

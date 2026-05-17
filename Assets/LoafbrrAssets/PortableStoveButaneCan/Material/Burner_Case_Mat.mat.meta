@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a079edc22cd17384998ea9aa74b3ca53
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 369548
+  packageName: Portable Stove Butane Can
+  packageVersion: 1.0
+  assetPath: Assets/LoafbrrAssets/PortableStoveButaneCan/Material/Burner_Case_Mat.mat
+  uploadId: 887974
