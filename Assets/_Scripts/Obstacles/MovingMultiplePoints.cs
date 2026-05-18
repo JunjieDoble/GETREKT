@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Moving : MonoBehaviour
 {
@@ -26,6 +26,22 @@ public class Moving : MonoBehaviour
         if (distance <= reachDistance)
         {
             currentIndex = (currentIndex + 1) % points.Length;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Player"))
+        {
+            collision.transform.SetParent(transform, true);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.transform.CompareTag("Player"))
+        {
+            collision.transform.SetParent(null);
         }
     }
 }

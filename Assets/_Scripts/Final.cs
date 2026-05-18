@@ -33,7 +33,7 @@ public class Final : MonoBehaviour
             checkpointText.SetText("Congratulations! You've reached the end of the level!");
             StartCoroutine(HideTextCoroutine());
 
-            StartCoroutine(RotateDoor());
+            StartCoroutine(RotatePan());
         }
     }
 
@@ -43,8 +43,10 @@ public class Final : MonoBehaviour
         checkpointText.SetText("");
     }
 
-    private IEnumerator RotateDoor()
+    private IEnumerator RotatePan()
     {
+        yield return new WaitForSeconds(ejectDelay);
+
         while (Quaternion.Angle(sartenFinal.transform.localRotation, targetRotation) > 0.1f)
         {
             sartenFinal.transform.localRotation = Quaternion.RotateTowards(
