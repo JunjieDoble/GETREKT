@@ -48,7 +48,7 @@ public class Pause : MonoBehaviour
     public void TogglePause()
     {
         isPaused = !isPaused;
-        if (isPaused) 
+        if (!isPaused) 
         {
             Time.timeScale = 1f;
             pauseMenu.SetActive(false);
@@ -60,5 +60,11 @@ public class Pause : MonoBehaviour
             pauseMenu.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    public void QuitGame()
+    {
+        UnityEditor.EditorApplication.isPlaying = false;
+        Application.Quit();
     }
 }
