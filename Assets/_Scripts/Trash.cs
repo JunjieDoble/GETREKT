@@ -25,7 +25,6 @@ public class Trash : MonoBehaviour
             remaining -= 1f;
         }
 
-        UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
 }
