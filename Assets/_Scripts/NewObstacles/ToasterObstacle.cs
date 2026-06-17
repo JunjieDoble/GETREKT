@@ -3,25 +3,38 @@ using UnityEngine;
 
 public class ToasterObstacle : MonoBehaviour
 {
-    [Header("Referencias")]
-    public Rigidbody toasterPlatformRb; // La rejilla/tostada que sube y baja física
+    [Header("Referencias de Ranuras")]
+    public Rigidbody slotARb;
+    public Rigidbody slotBRb;
 
     [Header("Tiempos")]
-    public float idleTime = 3f;         // Tiempo abajo antes de saltar
-    public float CooldownBeforeReset = 1.5f; // Tiempo arriba antes de volver a bajar suavemente
+    public float idleTime = 4f;
+    public float delayBetweenSlots = 1.2f;
+    public float cooldownBeforeReset = 1.5f;
 
     [Header("Fuerzas")]
-    public float popForce = 12f;        // Fuerza del salto vertical
+    public float popForce = 12f;
 
-    private Vector3 initialLocalPosition;
-    private bool isPopping = false;
+    // Variables para guardar posición Y rotación
+    private Vector3 initialPosA;
+    private Quaternion initialRotA;
+
+    private Vector3 initialPosB;
+    private Quaternion initialRotB;
 
     void Start()
     {
-        if (toasterPlatformRb != null)
+        if (slotARb != null)
         {
-            initialLocalPosition = toasterPlatformRb.transform.localPosition;
+            initialPosA = slotARb.transform.localPosition;
+            initialRotA = slotARb.transform.localRotation;
         }
+        if (slotBRb != null)
+        {
+            initialPosB = slotBRb.transform.localPosition;
+            initialRotB = slotBRb.transform.localRotation;
+        }
+
         StartCoroutine(ToasterLoop());
     }
 
@@ -29,31 +42,53 @@ public class ToasterObstacle : MonoBehaviour
     {
         while (true)
         {
-            // Esperar en estado de reposo
             yield return new WaitForSeconds(idleTime);
 
-            // ¡Saltar!
-            isPopping = true;
-            toasterPlatformRb.isKinematic = false;
-            toasterPlatformRb.AddForce(Vector3.up * popForce, ForceMode.Impulse);
+            if (slotARb != null)
+            {
+                slotARb.isKinematic = false;
+                slotARb.AddForce(Vector3.up * popForce, ForceMode.Impulse);
+            }
 
-            // Mantener arriba o esperar a que la física actúe
-            yield return new WaitForSeconds(CooldownBeforeReset);
+            yield return new WaitForSeconds(delayBetweenSlots);
 
-            // Resetear suavemente la plataforma a su base de manera cinemática para evitar descontrol de físicas
-            isPopping = false;
-            toasterPlatformRb.isKinematic = true;
+            if (slotBRb != null)
+            {
+                slotBRb.isKinematic = false;
+                slotBRb.AddForce(Vector3.up * popForce, ForceMode.Impulse);
+            }
+
+            yield return new WaitForSeconds(cooldownBeforeReset);
+
+            // Volvemos a hacerlas cinemáticas para forzar su regreso ignorando físicas
+            if (slotARb != null) { slotARb.isKinematic = true; slotARb.linearVelocity = Vector3.zero; slotARb.angularVelocity = Vector3.zero; }
+            if (slotBRb != null) { slotBRb.isKinematic = true; slotBRb.linearVelocity = Vector3.zero; slotBRb.angularVelocity = Vector3.zero; }
 
             float elapsed = 0f;
-            Vector3 currentLocalPos = toasterPlatformRb.transform.localPosition;
+            Vector3 currentPosA = slotARb != null ? slotARb.transform.localPosition : Vector3.zero;
+            Quaternion currentRotA = slotARb != null ? slotARb.transform.localRotation : Quaternion.identity;
+
+            Vector3 currentPosB = slotBRb != null ? slotBRb.transform.localPosition : Vector3.zero;
+            Quaternion currentRotB = slotBRb != null ? slotBRb.transform.localRotation : Quaternion.identity;
 
             while (elapsed < 0.5f)
             {
                 elapsed += Time.deltaTime;
-                toasterPlatformRb.transform.localPosition = Vector3.Lerp(currentLocalPos, initialLocalPosition, elapsed / 0.5f);
+                float t = elapsed / 0.5f;
+
+                if (slotARb != null)
+                {
+                    slotARb.transform.localPosition = Vector3.Lerp(currentPosA, initialPosA, t);
+                    slotARb.transform.localRotation = Quaternion.Slerp(currentRotA, initialRotA, t);
+                }
+
+                if (slotBRb != null)
+                {
+                    slotBRb.transform.localPosition = Vector3.Lerp(currentPosB, initialPosB, t);
+                    slotBRb.transform.localRotation = Quaternion.Slerp(currentRotB, initialRotB, t);
+                }
                 yield return null;
             }
-            toasterPlatformRb.transform.localPosition = initialLocalPosition;
         }
     }
 }

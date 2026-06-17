@@ -53,11 +53,11 @@ public class SinkObstacle : MonoBehaviour
             }
 
             // Accedemos al sistema de suciedad para penalizarlo por mojado/manchado
-            /*PlayerDirtTracker dirtTracker = player.GetComponent<PlayerDirtTracker>();
+            DirtyMeter dirtTracker = player.GetComponent<DirtyMeter>();
             if (dirtTracker != null)
             {
                 dirtTracker.IncreaseDirt(dirtIncreasePerSecond * Time.deltaTime);
-            }*/
+            }
         }
     }
 }

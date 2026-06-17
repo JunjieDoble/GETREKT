@@ -34,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isColliding = false;
     public bool isGrounded = true;
 
+    [Header("Estado del Jugador")]
+    public bool canControl = true;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -118,6 +121,8 @@ private void PlayerCamera()
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!canControl) return; // Bloquea solo el movimiento físico
+
         if (!context.started) return;
 
         Vector2 input = context.ReadValue<Vector2>();
@@ -135,6 +140,8 @@ private void PlayerCamera()
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (!canControl) return; // Bloquea el salto
+
         if (!context.started || !isGrounded) return;
 
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);

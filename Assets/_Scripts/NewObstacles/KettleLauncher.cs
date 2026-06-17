@@ -1,45 +1,57 @@
+using System.Collections;
 using UnityEngine;
 
 public class KettleLauncher : MonoBehaviour
 {
     [Header("Configuración de Lanzamiento")]
-    [Tooltip("Dirección del lanzamiento. Si se deja vacío, usará el frente (forward) del objeto.")]
     public Transform launchDirectionReference;
     public float launchForce = 15f;
+    public float upwardForce = 8f;
 
-    [Header("Efectos Visuales/Partículas (Opcional)")]
+    [Header("Control del Jugador")]
+    public float flightStunDuration = 2f;
+
+    [Header("Efectos Visuales")]
     public ParticleSystem steamParticles;
 
     private void OnTriggerEnter(Collider other)
     {
-        // Verificamos si es el jugador mediante su componente de movimiento
         PlayerMovement player = other.GetComponentInParent<PlayerMovement>();
 
-        if (player != null)
+        // Comprobamos que el jugador pueda ser controlado antes de lanzarlo
+        if (player != null && player.canControl)
         {
             Rigidbody playerRb = player.GetComponent<Rigidbody>();
             if (playerRb != null)
             {
-                // Determinar dirección
                 Vector3 direction = launchDirectionReference != null ?
                     launchDirectionReference.forward : transform.forward;
 
+                direction.y = 0;
                 direction.Normalize();
 
-                // Forzamos un pequeño reseteo de velocidad para que el lanzamiento sea consistente
+                Vector3 finalVelocity = (direction * launchForce) + (Vector3.up * upwardForce);
+
                 playerRb.linearVelocity = Vector3.zero;
+                playerRb.AddForce(finalVelocity, ForceMode.Impulse);
 
-                // Aplicamos el impulso físico masivo
-                playerRb.AddForce(direction * launchForce, ForceMode.Impulse);
+                if (steamParticles != null) steamParticles.Play();
 
-                // Activar partículas de vapor si existen
-                if (steamParticles != null)
-                {
-                    steamParticles.Play();
-                }
-
-                Debug.Log("¡Salchicha eyectada por el vapor de la hervidora!");
+                // Iniciamos la pérdida de control mediante la variable
+                StartCoroutine(StunPlayer(player));
             }
+        }
+    }
+
+    private IEnumerator StunPlayer(PlayerMovement player)
+    {
+        player.canControl = false; // El jugador ya no puede moverse
+
+        yield return new WaitForSeconds(flightStunDuration);
+
+        if (player != null)
+        {
+            player.canControl = true; // Recupera el control al aterrizar/pasar el tiempo
         }
     }
 }

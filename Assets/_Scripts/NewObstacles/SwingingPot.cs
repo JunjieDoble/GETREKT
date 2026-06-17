@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SwingingPot : MonoBehaviour
 {
     [Header("Configuración de Balanceo")]
-    public Vector3 swingAxis = Vector3.right; // Eje X por defecto
+    public Vector3 swingAxis = Vector3.right;
     public float maxAngle = 45f;
     public float speed = 2f;
 
@@ -14,6 +15,10 @@ public class SwingingPot : MonoBehaviour
     private float extraSwingOffset = 0f;
     private Quaternion baseRotation;
 
+    // Rastrear la salchicha encima para moverla sin emparentar
+    private List<Rigidbody> passengers = new List<Rigidbody>();
+    private Dictionary<Rigidbody, Vector3> lastLocalPositions = new Dictionary<Rigidbody, Vector3>();
+
     void Start()
     {
         baseRotation = transform.localRotation;
@@ -21,30 +26,65 @@ public class SwingingPot : MonoBehaviour
 
     void Update()
     {
-        // Ciclo de balanceo natural basado en el tiempo
         currentTimer += Time.deltaTime * speed;
-
-        // Reducimos gradualmente el impacto extra recibido por el jugador
         extraSwingOffset = Mathf.MoveTowards(extraSwingOffset, 0f, Time.deltaTime * 5f);
 
         float angle = Mathf.Sin(currentTimer) * (maxAngle + extraSwingOffset);
-
-        // Aplicamos la rotación local en el eje correcto
         transform.localRotation = baseRotation * Quaternion.AngleAxis(angle, swingAxis);
+    }
+
+    void FixedUpdate()
+    {
+        // Mover a la salchicha sincronizadamente con la rotación de la olla
+        for (int i = passengers.Count - 1; i >= 0; i--)
+        {
+            Rigidbody rb = passengers[i];
+            if (rb != null && lastLocalPositions.ContainsKey(rb))
+            {
+                // Convertimos la posición local guardada del frame anterior a la nueva posición global modificada por la olla
+                Vector3 currentWorldPosFromLocal = transform.TransformPoint(lastLocalPositions[rb]);
+                Vector3 deltaMovement = currentWorldPosFromLocal - rb.position;
+
+                // Movemos el Rigidbody de la salchicha anulando el freno estático de su FixedUpdate
+                rb.position += deltaMovement;
+
+                // Actualizamos para el siguiente frame
+                lastLocalPositions[rb] = transform.InverseTransformPoint(rb.position);
+            }
+            else
+            {
+                passengers.RemoveAt(i);
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Si el player choca a gran velocidad, la olla reacciona balanceándose más fuerte
         PlayerMovement player = collision.gameObject.GetComponentInParent<PlayerMovement>();
         if (player != null)
         {
-            Rigidbody playerRb = collision.rigidbody;
+            Rigidbody playerRb = player.GetComponent<Rigidbody>();
             if (playerRb != null)
             {
                 float impactForce = playerRb.linearVelocity.magnitude;
                 extraSwingOffset = impactForce * playerImpactSensitivity;
+
+                if (!passengers.Contains(playerRb))
+                {
+                    passengers.Add(playerRb);
+                    lastLocalPositions[playerRb] = transform.InverseTransformPoint(playerRb.position);
+                }
             }
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        Rigidbody playerRb = collision.gameObject.GetComponentInParent<Rigidbody>();
+        if (playerRb != null && passengers.Contains(playerRb))
+        {
+            passengers.Remove(playerRb);
+            lastLocalPositions.Remove(playerRb);
         }
     }
 }
